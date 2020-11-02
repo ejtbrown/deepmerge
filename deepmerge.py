@@ -6,6 +6,11 @@ deepmerge.py - merges multiple directories which may contain similar or
                get copied with their modification times appended to their
                names
 
+Authors:
+  Erick Brown <ejtbpublic -at- gmail -dot- com>
+
+Copyright:
+  2020, Erick Brown (work for hire; LogMeIn, Inc.)
 """
 
 import os
