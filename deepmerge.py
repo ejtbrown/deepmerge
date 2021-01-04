@@ -91,11 +91,14 @@ def recurse_dir(source_dir, sub_dir):
             # This isn't a directory; handle merge
             if not os.path.exists(os.path.sep.join([dest, f])):
                 # If the file doesn't exist in the dest, copy it
-                shutil.copy2(
-                    os.path.sep.join([source, f]),
-                    os.path.sep.join([dest, f])
-                )
-                assure_dest_hash(os.path.sep.join([dest, f]))
+                try:
+                    shutil.copy2(
+                        os.path.sep.join([source, f]),
+                        os.path.sep.join([dest, f])
+                    )
+                    assure_dest_hash(os.path.sep.join([dest, f]))
+                except IOError as ee:
+                    sys.stderr.write(str(ee) + '\n')
             else:
                 # The file exists; check to see if it's older than the one in
                 # the source directory
@@ -116,15 +119,18 @@ def recurse_dir(source_dir, sub_dir):
                         os.utime(os.path.sep.join([source, f]), (s_mod, s_mod))
                     else:
                         print(os.path.sep.join([source, f]) + '; newer and different; save/copy')
-                        shutil.move(
-                            os.path.sep.join([dest, f]),
-                            os.path.sep.join([dest, f]) + '--' + ts_str(d_mod)
-                        )
-                        shutil.copy2(
-                            os.path.sep.join([source, f]),
-                            os.path.sep.join([dest, f])
-                        )
-                        dest_hashes[os.path.sep.join([dest, f])].append(s_hash)
+                        try:
+                            shutil.move(
+                                os.path.sep.join([dest, f]),
+                                os.path.sep.join([dest, f]) + '--' + ts_str(d_mod)
+                            )
+                            shutil.copy2(
+                                os.path.sep.join([source, f]),
+                                os.path.sep.join([dest, f])
+                            )
+                            dest_hashes[os.path.sep.join([dest, f])].append(s_hash)
+                        except IOError as ee:
+                            sys.stderr.write(str(ee) + '\n')
                 else:
                     if s_mod != d_mod:
                         # The destination is newer; copy the source, but append
@@ -136,11 +142,14 @@ def recurse_dir(source_dir, sub_dir):
                             continue
 
                         print(os.path.sep.join([source, f]) + '; older but different; saving')
-                        shutil.copy2(
-                            os.path.sep.join([source, f]),
-                            os.path.sep.join([dest, f]) + '--' + ts_str(s_mod)
-                        )
-                        dest_hashes[os.path.sep.join([dest, f])].append(s_hash)
+                        try:
+                            shutil.copy2(
+                                os.path.sep.join([source, f]),
+                                os.path.sep.join([dest, f]) + '--' + ts_str(s_mod)
+                            )
+                            dest_hashes[os.path.sep.join([dest, f])].append(s_hash)
+                        except IOError as ee:
+                            sys.stderr.write(str(ee) + '\n')
 
 
 # Main entry point
