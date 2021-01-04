@@ -59,6 +59,25 @@ def assure_dest_hash(path):
     return current_hash
 
 
+def is_readable(check_file):
+    """
+    is_readable - returns True if the file is readable
+
+    :type check_file: str   Path and file name of the file to check
+    :return:                See description
+    :rtype: bool
+    """
+
+    try:
+        os.stat(check_file)
+        if not os.path.isdir(check_file):
+            open(check_file, 'rb').close()
+
+        return True
+    except (IOError, OSError):
+        return False
+
+
 def recurse_dir(source_dir, sub_dir):
     """
     recurs_dir - recursively walk a source directory
@@ -81,7 +100,11 @@ def recurse_dir(source_dir, sub_dir):
         os.mkdir(dest)
 
     for f in os.listdir(source):
-        if os.path.isdir(os.path.sep.join([source, f])):
+        if not is_readable(os.path.sep.join([source, f])):
+            # If there is something that precludes processing this entry, make
+            # note of it and move along
+            sys.stderr.write('Unable to process ' + os.path.sep.join([source, f]))
+        elif os.path.isdir(os.path.sep.join([source, f])):
             # This is a directory; recurse down into it
             if sub_dir is None:
                 recurse_dir(source_dir, f)
