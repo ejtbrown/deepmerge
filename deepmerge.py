@@ -97,7 +97,7 @@ def recurse_dir(source_dir, sub_dir):
                         os.path.sep.join([dest, f])
                     )
                     assure_dest_hash(os.path.sep.join([dest, f]))
-                except IOError as ee:
+                except (IOError, OSError) as ee:
                     sys.stderr.write(str(ee) + '\n')
             else:
                 # The file exists; check to see if it's older than the one in
@@ -129,7 +129,7 @@ def recurse_dir(source_dir, sub_dir):
                                 os.path.sep.join([dest, f])
                             )
                             dest_hashes[os.path.sep.join([dest, f])].append(s_hash)
-                        except IOError as ee:
+                        except (IOError, OSError) as ee:
                             sys.stderr.write(str(ee) + '\n')
                 else:
                     if s_mod != d_mod:
@@ -148,7 +148,7 @@ def recurse_dir(source_dir, sub_dir):
                                 os.path.sep.join([dest, f]) + '--' + ts_str(s_mod)
                             )
                             dest_hashes[os.path.sep.join([dest, f])].append(s_hash)
-                        except IOError as ee:
+                        except (IOError, OSError) as ee:
                             sys.stderr.write(str(ee) + '\n')
 
 
